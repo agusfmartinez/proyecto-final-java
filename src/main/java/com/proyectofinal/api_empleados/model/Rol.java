@@ -1,23 +1,32 @@
 package com.proyectofinal.api_empleados.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Rol {
 
-    private static int contadorId = 1;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    private int id;
     private String nombre;
 
     public Rol() {
-        this.id = contadorId++;
     }
 
     public Rol(String nombre) {
-        this.id = contadorId++;
         this.nombre = nombre;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNombre() {
