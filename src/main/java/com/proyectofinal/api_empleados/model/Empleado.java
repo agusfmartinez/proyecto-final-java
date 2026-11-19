@@ -1,12 +1,28 @@
 package com.proyectofinal.api_empleados.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
 public class Empleado {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     private int legajo;
     private String nombre;
     private String apellido;
     private String cuil;
-    private Rol rol;
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "rol_id")
+    private Rol rol;
 
     public Empleado() {
     }
@@ -19,12 +35,20 @@ public class Empleado {
         generarEmail();
     }
 
-    private void generarEmail() {
+    public void generarEmail() {
         if (nombre == null || nombre.isBlank() || apellido == null || apellido.isBlank()) {
             this.email = null;
             return;
         }
         this.email = (nombre.charAt(0) + apellido + "@mail.com").toLowerCase();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getLegajo() {
