@@ -1,6 +1,15 @@
 package com.proyectofinal.api_empleados.util;
 
+import com.proyectofinal.api_empleados.model.Empleado;
+
 public class Validador {
+
+    public static void validarEmpleado(Empleado empleado) {
+        validarLegajo(empleado.getLegajo());
+        validarNombre(empleado.getNombre());
+        validarApellido(empleado.getApellido());
+        validarCuil(empleado.getCuil());
+    }
 
     public static void validarLegajo(int legajo) {
         if (legajo <= 0) {
