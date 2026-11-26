@@ -17,6 +17,17 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Integer> {
     // JOIN con rol: WHERE rol.nombre = ?
     List<Empleado> findByRolNombre(String nombre);
 
+    // ¿Ya existe un empleado con ese legajo / CUIL? Se usan al crear.
+    boolean existsByLegajo(int legajo);
+
+    boolean existsByCuil(String cuil);
+
+    // Igual, pero ignorando al empleado con ese id: se usan al editar,
+    // para que un empleado pueda conservar su propio legajo y CUIL.
+    boolean existsByLegajoAndIdNot(int legajo, int id);
+
+    boolean existsByCuilAndIdNot(String cuil, int id);
+
     @Query("SELECT new com.proyectofinal.api_empleados.dto.EmpleadoConRol("
             + "e.id, e.legajo, CONCAT(e.apellido, ', ', e.nombre), e.email, r.nombre) "
             + "FROM Empleado e JOIN e.rol r")
