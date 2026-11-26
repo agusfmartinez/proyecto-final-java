@@ -14,6 +14,8 @@ const campoNombre = document.getElementById("nombre");
 const campoApellido = document.getElementById("apellido");
 const campoCuil = document.getElementById("cuil");
 const campoRol = document.getElementById("rol");
+const busquedaApellido = document.getElementById("busqueda-apellido");
+const filtroRol = document.getElementById("filtro-rol");
 
 // Empleados que trajo la API (se usan para completar el formulario al editar)
 let empleados = [];
@@ -43,29 +45,44 @@ function leerRespuesta(response) {
 }
 
 // ---------------------------------------------------------------
-// GET roles: completa el select del formulario
+// GET roles: completa el select del formulario y el filtro
 // ---------------------------------------------------------------
 function cargarRoles() {
   fetch(URL_ROLES)
     .then(leerRespuesta)
     .then(response => response.json())
     .then(roles => {
-      let opciones = `<option value="">Sin rol</option>`;
+      let opcionesFormulario = `<option value="">Sin rol</option>`;
+      let opcionesFiltro = `<option value="">Todos</option>`;
 
+      // El formulario manda el id del rol; el filtro usa el nombre
+      // (GET /empleados/rol/{nombre})
       roles.forEach(r => {
-        opciones += `<option value="${r.id}">${r.nombre}</option>`;
+        opcionesFormulario += `<option value="${r.id}">${r.nombre}</option>`;
+        opcionesFiltro += `<option value="${r.nombre}">${r.nombre}</option>`;
       });
 
-      campoRol.innerHTML = opciones;
+      campoRol.innerHTML = opcionesFormulario;
+      filtroRol.innerHTML = opcionesFiltro;
     })
     .catch(error => mostrarMensaje(error.message, true));
 }
 
 // ---------------------------------------------------------------
-// GET empleados
+// GET empleados: todos, los que coinciden con el apellido buscado,
+// o los del rol elegido en el filtro
 // ---------------------------------------------------------------
 function cargarEmpleados() {
-  fetch(URL_API)
+  let url = URL_API;
+
+  // encodeURIComponent convierte espacios y tildes para que viajen bien en la URL
+  if (busquedaApellido.value.trim() !== "") {
+    url = URL_API + "?apellido=" + encodeURIComponent(busquedaApellido.value.trim());
+  } else if (filtroRol.value !== "") {
+    url = URL_API + "/rol/" + encodeURIComponent(filtroRol.value);
+  }
+
+  fetch(url)
     .then(leerRespuesta)
     .then(response => response.json())
     .then(datos => {
@@ -96,6 +113,7 @@ function mostrarEmpleados() {
         <p>${e.email}</p>
         <div class="acciones">
           <button onclick="editarEmpleado(${e.id})">Editar</button>
+          <button class="peligro" onclick="eliminarEmpleado(${e.id})">Eliminar</button>
         </div>
       </article>
     `;
@@ -103,6 +121,18 @@ function mostrarEmpleados() {
 
   lista.innerHTML = html;
 }
+
+// La API no combina búsqueda y filtro en un mismo pedido:
+// al usar uno, se limpia el otro para que el listado no confunda.
+busquedaApellido.addEventListener("input", function () {
+  filtroRol.value = "";
+  cargarEmpleados();
+});
+
+filtroRol.addEventListener("change", function () {
+  busquedaApellido.value = "";
+  cargarEmpleados();
+});
 
 // ---------------------------------------------------------------
 // POST y PUT: crear o actualizar (según el formulario tenga un id o no)
@@ -143,6 +173,30 @@ formulario.addEventListener("submit", function (evento) {
     })
     .catch(error => mostrarMensaje(error.message, true));
 });
+
+// ---------------------------------------------------------------
+// DELETE: eliminar empleado
+// La API responde 204 (sin cuerpo): no se llama a response.json().
+// ---------------------------------------------------------------
+function eliminarEmpleado(id) {
+  const e = empleados.find(empleado => empleado.id === id);
+
+  if (!confirm("¿Eliminar a " + e.nombreCompleto + " (legajo " + e.legajo + ")?")) {
+    return;
+  }
+
+  fetch(URL_API + "/" + id, { method: "DELETE" })
+    .then(leerRespuesta)
+    .then(() => {
+      mostrarMensaje("Empleado eliminado.", false);
+      // Si se estaba editando a este empleado, se vacía el formulario
+      if (campoId.value === String(id)) {
+        limpiarFormulario();
+      }
+      cargarEmpleados();
+    })
+    .catch(error => mostrarMensaje(error.message, true));
+}
 
 // ---------------------------------------------------------------
 // Editar: pasa los datos del empleado al formulario

@@ -103,6 +103,10 @@ button.secundario {
   background: #6b7280;
 }
 
+button.peligro {
+  background: #b91c1c;
+}
+
 /* Listado de empleados */
 .encabezado-lista {
   display: flex;
@@ -115,6 +119,16 @@ button.secundario {
 
 .encabezado-lista h2 {
   margin: 0;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filtro {
+  min-width: 200px;
 }
 
 .lista {
