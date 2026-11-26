@@ -32,6 +32,14 @@ public class EmpleadoService {
                 .orElseThrow(() -> new EmpleadoNoEncontradoException(id));
     }
 
+    public List<Empleado> buscarPorApellido(String apellido) {
+        return empleadoRepository.findByApellidoContainingIgnoreCase(apellido);
+    }
+
+    public List<Empleado> listarPorRol(String rol) {
+        return empleadoRepository.findByRolNombre(rol);
+    }
+
     public Empleado guardar(Empleado datos) {
         Validador.validarEmpleado(datos);
 

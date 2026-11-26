@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyectofinal.api_empleados.model.Empleado;
@@ -34,6 +35,18 @@ public class EmpleadoController {
     @GetMapping("/{id}")
     public Empleado obtenerPorId(@PathVariable int id) {
         return empleadoService.obtenerPorId(id);
+    }
+
+    // GET /empleados?apellido=gom
+    @GetMapping(params = "apellido")
+    public List<Empleado> buscarPorApellido(@RequestParam String apellido) {
+        return empleadoService.buscarPorApellido(apellido);
+    }
+
+    // GET /empleados/rol/Analista
+    @GetMapping("/rol/{rol}")
+    public List<Empleado> listarPorRol(@PathVariable String rol) {
+        return empleadoService.listarPorRol(rol);
     }
 
     @PostMapping
