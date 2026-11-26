@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyectofinal.api_empleados.dto.CantidadPorRol;
+import com.proyectofinal.api_empleados.dto.EmpleadoConRol;
 import com.proyectofinal.api_empleados.model.Empleado;
 import com.proyectofinal.api_empleados.service.EmpleadoService;
 
@@ -47,6 +49,18 @@ public class EmpleadoController {
     @GetMapping("/rol/{rol}")
     public List<Empleado> listarPorRol(@PathVariable String rol) {
         return empleadoService.listarPorRol(rol);
+    }
+
+    // GET /empleados/con-rol
+    @GetMapping("/con-rol")
+    public List<EmpleadoConRol> listarConRol() {
+        return empleadoService.listarConRol();
+    }
+
+    // GET /empleados/cantidad-por-rol
+    @GetMapping("/cantidad-por-rol")
+    public List<CantidadPorRol> contarPorRol() {
+        return empleadoService.contarPorRol();
     }
 
     @PostMapping

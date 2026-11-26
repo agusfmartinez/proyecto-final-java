@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.proyectofinal.api_empleados.dto.CantidadPorRol;
+import com.proyectofinal.api_empleados.dto.EmpleadoConRol;
 import com.proyectofinal.api_empleados.exception.EmpleadoNoEncontradoException;
 import com.proyectofinal.api_empleados.exception.RolNoEncontradoException;
 import com.proyectofinal.api_empleados.model.Empleado;
@@ -38,6 +40,14 @@ public class EmpleadoService {
 
     public List<Empleado> listarPorRol(String rol) {
         return empleadoRepository.findByRolNombre(rol);
+    }
+
+    public List<EmpleadoConRol> listarConRol() {
+        return empleadoRepository.listarConRol();
+    }
+
+    public List<CantidadPorRol> contarPorRol() {
+        return empleadoRepository.contarPorRol();
     }
 
     public Empleado guardar(Empleado datos) {

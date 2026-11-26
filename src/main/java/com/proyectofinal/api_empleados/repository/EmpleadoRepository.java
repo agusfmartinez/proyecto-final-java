@@ -3,7 +3,10 @@ package com.proyectofinal.api_empleados.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import com.proyectofinal.api_empleados.dto.CantidadPorRol;
+import com.proyectofinal.api_empleados.dto.EmpleadoConRol;
 import com.proyectofinal.api_empleados.model.Empleado;
 
 public interface EmpleadoRepository extends JpaRepository<Empleado, Integer> {
@@ -13,4 +16,13 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Integer> {
 
     // JOIN con rol: WHERE rol.nombre = ?
     List<Empleado> findByRolNombre(String nombre);
+
+    @Query("SELECT new com.proyectofinal.api_empleados.dto.EmpleadoConRol("
+            + "e.id, e.legajo, CONCAT(e.apellido, ', ', e.nombre), e.email, r.nombre) "
+            + "FROM Empleado e JOIN e.rol r")
+    List<EmpleadoConRol> listarConRol();
+
+    @Query("SELECT new com.proyectofinal.api_empleados.dto.CantidadPorRol(r.nombre, COUNT(e)) "
+            + "FROM Empleado e JOIN e.rol r GROUP BY r.nombre")
+    List<CantidadPorRol> contarPorRol();
 }
