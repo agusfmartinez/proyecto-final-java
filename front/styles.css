@@ -43,9 +43,46 @@ main {
   color: #991b1b;
 }
 
+/* Formulario */
+.panel {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.panel h2,
 main h2 {
   margin-top: 0;
   font-size: 1.15rem;
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+input,
+select {
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.botones {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
 }
 
 button {
@@ -60,6 +97,10 @@ button {
 
 button:hover {
   opacity: 0.9;
+}
+
+button.secundario {
+  background: #6b7280;
 }
 
 /* Listado de empleados */
@@ -105,4 +146,10 @@ button:hover {
 
 .tarjeta .legajo {
   font-weight: bold;
+}
+
+.tarjeta .acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
 }

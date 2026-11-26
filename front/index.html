@@ -14,6 +14,41 @@
   <main>
     <p id="mensaje" class="mensaje" hidden></p>
 
+    <section class="panel">
+      <h2 id="titulo-formulario">Nuevo empleado</h2>
+
+      <!-- novalidate: desactiva las validaciones del navegador para que
+           los errores los informe la API (400 / 409) y se vean en pantalla -->
+      <form id="formulario" novalidate>
+        <input type="hidden" id="id">
+
+        <label>Legajo
+          <input type="number" id="legajo" step="1">
+        </label>
+
+        <label>Nombre
+          <input type="text" id="nombre">
+        </label>
+
+        <label>Apellido
+          <input type="text" id="apellido">
+        </label>
+
+        <label>CUIL (11 dígitos)
+          <input type="text" id="cuil" maxlength="11">
+        </label>
+
+        <label>Rol
+          <select id="rol"></select>
+        </label>
+
+        <div class="botones">
+          <button type="submit">Guardar</button>
+          <button type="button" id="btn-cancelar" class="secundario" hidden>Cancelar edición</button>
+        </div>
+      </form>
+    </section>
+
     <section>
       <div class="encabezado-lista">
         <h2>Listado</h2>

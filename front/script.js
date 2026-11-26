@@ -1,11 +1,21 @@
 // Direcciones de la API
 const URL_API = "http://localhost:8080/empleados";
+const URL_ROLES = "http://localhost:8080/roles";
 
 // Elementos de la página
 const lista = document.getElementById("lista");
 const mensaje = document.getElementById("mensaje");
+const formulario = document.getElementById("formulario");
+const tituloFormulario = document.getElementById("titulo-formulario");
+const botonCancelar = document.getElementById("btn-cancelar");
+const campoId = document.getElementById("id");
+const campoLegajo = document.getElementById("legajo");
+const campoNombre = document.getElementById("nombre");
+const campoApellido = document.getElementById("apellido");
+const campoCuil = document.getElementById("cuil");
+const campoRol = document.getElementById("rol");
 
-// Empleados que trajo la API
+// Empleados que trajo la API (se usan para completar el formulario al editar)
 let empleados = [];
 
 // ---------------------------------------------------------------
@@ -30,6 +40,25 @@ function leerRespuesta(response) {
       });
   }
   return response;
+}
+
+// ---------------------------------------------------------------
+// GET roles: completa el select del formulario
+// ---------------------------------------------------------------
+function cargarRoles() {
+  fetch(URL_ROLES)
+    .then(leerRespuesta)
+    .then(response => response.json())
+    .then(roles => {
+      let opciones = `<option value="">Sin rol</option>`;
+
+      roles.forEach(r => {
+        opciones += `<option value="${r.id}">${r.nombre}</option>`;
+      });
+
+      campoRol.innerHTML = opciones;
+    })
+    .catch(error => mostrarMensaje(error.message, true));
 }
 
 // ---------------------------------------------------------------
@@ -65,6 +94,9 @@ function mostrarEmpleados() {
         <p class="legajo">Legajo ${e.legajo}</p>
         <p>CUIL: ${e.cuil}</p>
         <p>${e.email}</p>
+        <div class="acciones">
+          <button onclick="editarEmpleado(${e.id})">Editar</button>
+        </div>
       </article>
     `;
   });
@@ -72,5 +104,73 @@ function mostrarEmpleados() {
   lista.innerHTML = html;
 }
 
+// ---------------------------------------------------------------
+// POST y PUT: crear o actualizar (según el formulario tenga un id o no)
+// ---------------------------------------------------------------
+formulario.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+
+  // El rol se envía como objeto: la API espera { "id": ... }.
+  // Si no se eligió ninguno, va null (el empleado queda sin rol).
+  const empleado = {
+    legajo: Number(campoLegajo.value),
+    nombre: campoNombre.value,
+    apellido: campoApellido.value,
+    cuil: campoCuil.value,
+    rol: campoRol.value === "" ? null : { id: Number(campoRol.value) }
+  };
+
+  let url = URL_API;
+  let metodo = "POST";
+
+  if (campoId.value !== "") {
+    url = URL_API + "/" + campoId.value;
+    metodo = "PUT";
+  }
+
+  fetch(url, {
+    method: metodo,
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(empleado)
+  })
+    .then(leerRespuesta)
+    .then(() => {
+      mostrarMensaje("Empleado guardado.", false);
+      limpiarFormulario();
+      cargarEmpleados();
+    })
+    .catch(error => mostrarMensaje(error.message, true));
+});
+
+// ---------------------------------------------------------------
+// Editar: pasa los datos del empleado al formulario
+// ---------------------------------------------------------------
+function editarEmpleado(id) {
+  const e = empleados.find(empleado => empleado.id === id);
+
+  campoId.value = e.id;
+  campoLegajo.value = e.legajo;
+  campoNombre.value = e.nombre;
+  campoApellido.value = e.apellido;
+  campoCuil.value = e.cuil;
+  campoRol.value = e.rol ? e.rol.id : "";
+
+  tituloFormulario.textContent = "Editando empleado " + e.legajo;
+  botonCancelar.hidden = false;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function limpiarFormulario() {
+  formulario.reset();
+  campoId.value = "";
+  tituloFormulario.textContent = "Nuevo empleado";
+  botonCancelar.hidden = true;
+}
+
+botonCancelar.addEventListener("click", limpiarFormulario);
+
 // Carga inicial
+cargarRoles();
 cargarEmpleados();
